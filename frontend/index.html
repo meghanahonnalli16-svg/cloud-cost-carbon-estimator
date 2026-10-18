@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Cloud Cost & Carbon Estimator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 950px;
+            margin: 30px auto;
+            padding: 0 15px
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            text-align: left
+        }
+
+        th {
+            background: #f0f0f0
+        }
+
+        .box {
+            background: #eef7ee;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            color: #000
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Multi-Cloud Cost & Carbon Footprint Estimator</h2>
+    vCPUs <input id="vcpu" type="number" value="4" style="width:60px">
+    Hours/month <input id="hours" type="number" value="730" style="width:70px">
+    Utilization <input id="util" type="number" step="0.1" value="0.5" style="width:60px">
+    <button onclick="run()">Compare</button>
+    <div id="rec"></div>
+    <table id="tbl"></table>
+    <canvas id="chart" height="110"></canvas>
+    <script>
+        let chart;
+        async function run() {
+            const q = `vcpu=${vcpu.value}&hours=${hours.value}&utilization=${util.value}`;
+            const d = await (await fetch('/compare?' + q)).json();
+            rec.innerHTML = `<div class="box">Cheapest: <b>${d.cheapest.provider} ${d.cheapest.region}</b> ($${d.cheapest.cost_usd}/month)</div>
+ <div class="box">Greenest: <b>${d.greenest.provider} ${d.greenest.region}</b> (${d.greenest.co2_kg} kg CO2e/month)</div>`;
+            tbl.innerHTML = '<tr><th>Provider</th><th>Region</th><th>Instance</th><th>Cost $/month</th><th>kWh</th><th>kg CO2e</th></tr>' +
+                d.results.map(r => `<tr><td>${r.provider}</td><td>${r.region}</td><td>${r.instance}</td><td>${r.cost_usd}</td><td>${r.kwh}</td><td>${r.co2_kg}</td></tr>`).join('');
+            const labels = d.results.map(r => r.provider + ' ' + r.region);
+            if (chart) chart.destroy();
+            chart = new Chart(document.getElementById('chart'), {
+                type: 'bar', data: {
+                    labels, datasets: [
+                        { label: 'Cost ($/month)', data: d.results.map(r => r.cost_usd), backgroundColor: '#4a90d9' },
+                        { label: 'CO2e (kg/month)', data: d.results.map(r => r.co2_kg), backgroundColor: '#5cb85c' }]
+                }
+            });
+        }
+        run();
+    </script>
+</body>
+
+</html>
