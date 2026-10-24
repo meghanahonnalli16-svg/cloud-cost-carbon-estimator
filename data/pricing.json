@@ -46,20 +46,20 @@
   "region": "asia-south1 (Mumbai)",
   "grid": "India",
   "instance": "n2-standard-4",
-  "price_4vcpu": 0.214
+  "price_4vcpu": 0.2333
  },
  {
   "provider": "GCP",
   "region": "europe-north1 (Finland)",
   "grid": "Finland",
   "instance": "n2-standard-4",
-  "price_4vcpu": 0.214
+  "price_4vcpu": 0.2138
  },
  {
   "provider": "GCP",
   "region": "us-central1 (Iowa)",
   "grid": "USA",
   "instance": "n2-standard-4",
-  "price_4vcpu": 0.194
+  "price_4vcpu": 0.1942
  }
 ]
