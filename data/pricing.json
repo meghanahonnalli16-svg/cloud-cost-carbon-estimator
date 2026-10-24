@@ -4,14 +4,14 @@
   "region": "ap-south-1 (Mumbai)",
   "grid": "India",
   "instance": "m6i.xlarge",
-  "price_4vcpu": 0.194
+  "price_4vcpu": 0.202
  },
  {
   "provider": "AWS",
   "region": "eu-north-1 (Stockholm)",
   "grid": "Sweden",
   "instance": "m6i.xlarge",
-  "price_4vcpu": 0.184
+  "price_4vcpu": 0.204
  },
  {
   "provider": "AWS",
