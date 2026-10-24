@@ -12,6 +12,7 @@ Prices are fetched by the scripts in `data_pipeline/`.
 - Compute energy (kWh) = watts per vCPU x vCPUs x hours / 1000
 - Memory energy (kWh) = RAM in GB x 0.000392 x hours
 - Total energy (kWh) = (compute + memory) x PUE
+- Storage (not yet used in the tool): SSD 0.0012 kWh per terabyte-hour (CCF coefficient).
 
 PUE (Power Usage Effectiveness) is total data centre energy divided by IT equipment energy.
 Values used: AWS 1.135, Azure 1.185, GCP 1.10.
@@ -25,6 +26,7 @@ Grid intensity values (gCO2/kWh): India 713, USA 369, Finland 79, Sweden 41.
 - Cloud Carbon Footprint methodology: https://www.cloudcarbonfootprint.org/docs/methodology/
 - Ember electricity data: https://ember-energy.org/data/
 - AWS Price List, Azure Retail Prices API, GCP Cloud Billing Catalog API
+- Status: memory coefficient, 50% default utilization and Azure PUE are verified against CCF. Watts per vCPU and grid values are being verified.
 
 ## Assumptions and limitations
 - Utilization is assumed (default 50%), not measured.
