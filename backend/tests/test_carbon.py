@@ -19,11 +19,11 @@ def test_higher_utilization_uses_more_energy():
 
 
 def test_aws_known_value():
-    # Worked by hand: watts = 0.74 + 0.5 * (3.5 - 0.74) = 2.12
-    # compute = 2.12 * 4 * 730 / 1000 = 6.1904 kWh
+    # watts = 0.71 + 0.5 * (3.46 - 0.71) = 2.085
+    # compute = 2.085 * 4 * 730 / 1000 = 6.0882 kWh
     # memory = 16 * 0.000392 * 730 = 4.57856 kWh
-    # total = (6.1904 + 4.57856) * 1.135 = 12.2227 kWh
-    assert estimate_kwh("AWS", 4, 16, 730, 0.5) == pytest.approx(12.2227, rel=1e-3)
+    # total = (6.0882 + 4.57856) * 1.135 = 12.1068 kWh
+    assert estimate_kwh("AWS", 4, 16, 730, 0.5) == pytest.approx(12.1068, rel=1e-3)
 
 
 def test_co2_formula():

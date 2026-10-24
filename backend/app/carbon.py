@@ -1,5 +1,5 @@
 # Method based on Cloud Carbon Footprint (CCF)
-WATTS = {"AWS": (0.74, 3.5), "Azure": (0.78, 3.76), "GCP": (0.71, 4.26)}  # min, max watts per vCPU
+WATTS = {"AWS": (0.71, 3.46), "Azure": (0.77, 3.74), "GCP": (1.34, 4.98)}  # min, max W per vCPU (CCF averages)
 PUE = {"AWS": 1.135, "Azure": 1.185, "GCP": 1.10}
 MEM_KWH_PER_GB_HOUR = 0.000392
 
