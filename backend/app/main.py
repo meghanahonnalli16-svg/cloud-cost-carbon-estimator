@@ -5,8 +5,6 @@ from fastapi.responses import FileResponse
 from app.carbon import estimate_kwh, estimate_co2_kg
 
 ROOT = Path(__file__).resolve().parents[2]
-PRICES = json.loads((ROOT / "data" / "pricing.json").read_text())
-GRID = json.loads((ROOT / "data" / "grid_intensity.json").read_text())
 
 app = FastAPI(title="Multi-Cloud Cost & Carbon Estimator")
 
@@ -16,6 +14,8 @@ def home():
 
 @app.get("/compare")
 def compare(vcpu: int = 4, hours: int = 730, utilization: float = 0.5):
+    PRICES = json.loads((ROOT / "data" / "pricing.json").read_text())
+    GRID = json.loads((ROOT / "data" / "grid_intensity.json").read_text())
     ram = vcpu * 4
     results = []
     for p in PRICES:
@@ -24,7 +24,13 @@ def compare(vcpu: int = 4, hours: int = 730, utilization: float = 0.5):
         co2 = estimate_co2_kg(kwh, GRID[p["grid"]])
         results.append({"provider": p["provider"], "region": p["region"],
                         "instance": p["instance"], "cost_usd": round(cost, 2),
-                        "kwh": round(kwh, 1), "co2_kg": round(co2, 1)})
+                        "kwh": round(kwh, 1), "co2_kg": round(co2, 2)})
+    # Pareto: no other option is at least as cheap AND at least as green, and better in one
+    for r in results:
+        r["pareto"] = not any(
+            o["cost_usd"] <= r["cost_usd"] and o["co2_kg"] <= r["co2_kg"]
+            and (o["cost_usd"] < r["cost_usd"] or o["co2_kg"] < r["co2_kg"])
+            for o in results)
     return {"results": results,
             "cheapest": min(results, key=lambda r: r["cost_usd"]),
             "greenest": min(results, key=lambda r: r["co2_kg"])}
