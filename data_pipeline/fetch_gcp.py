@@ -9,7 +9,7 @@ if not KEY:
     raise SystemExit("Set GCP_API_KEY first")
 
 URL = "https://cloudbilling.googleapis.com/v1/services/6F81-5844-456A/skus"
-REGIONS = ["asia-south1", "europe-north1", "us-central1"]
+REGIONS = ["asia-south1", "europe-north1", "us-central1", "asia-southeast1", "europe-west3"]
 VCPU, RAM_GB = 4, 16  # n2-standard-4
 
 core, ram = {}, {}

@@ -61,5 +61,47 @@
   "grid": "USA",
   "instance": "n2-standard-4",
   "price_4vcpu": 0.1942
+ },
+ {
+  "provider": "AWS",
+  "region": "ap-southeast-1 (Singapore)",
+  "grid": "Singapore",
+  "instance": "m6i.xlarge",
+  "price_4vcpu": 0.24
+ },
+ {
+  "provider": "AWS",
+  "region": "eu-central-1 (Frankfurt)",
+  "grid": "Germany",
+  "instance": "m6i.xlarge",
+  "price_4vcpu": 0.23
+ },
+ {
+  "provider": "Azure",
+  "region": "Southeast Asia",
+  "grid": "Singapore",
+  "instance": "D4s_v5",
+  "price_4vcpu": 0.24
+ },
+ {
+  "provider": "Azure",
+  "region": "Germany West Central",
+  "grid": "Germany",
+  "instance": "D4s_v5",
+  "price_4vcpu": 0.23
+ },
+ {
+  "provider": "GCP",
+  "region": "asia-southeast1 (Singapore)",
+  "grid": "Singapore",
+  "instance": "n2-standard-4",
+  "price_4vcpu": 0.2396
+ },
+ {
+  "provider": "GCP",
+  "region": "europe-west3 (Frankfurt)",
+  "grid": "Germany",
+  "instance": "n2-standard-4",
+  "price_4vcpu": 0.2502
  }
 ]

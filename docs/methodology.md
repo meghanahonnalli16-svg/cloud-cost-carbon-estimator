@@ -20,16 +20,19 @@ Values used: AWS 1.135, Azure 1.185, GCP 1.10.
 ## Emissions
 CO2e (kg) = total energy (kWh) x grid carbon intensity (gCO2/kWh) / 1000
 
-Grid intensity values (gCO2/kWh): India 713, USA 369, Finland 79, Sweden 41.
+Grid intensity values (gCO2/kWh): India 708, USA 416, Finland 181, Sweden 8, Singapore 408.5, Germany 338.
+Watts per vCPU (min/max): AWS 0.71/3.46, Azure 0.77/3.74, GCP 1.34/4.98 (CCF provider averages).
 
 ## Sources
 - Cloud Carbon Footprint methodology: https://www.cloudcarbonfootprint.org/docs/methodology/
-- Ember electricity data: https://ember-energy.org/data/
+- CCF Appendix I (energy coefficients and PUE) and Appendix IV (grid emission factors). Grid sources inside CCF: carbonfootprint.com 2020 (India), EEA (Sweden), Google region carbon data (Finland), EPA eGRID (USA).
 - AWS Price List, Azure Retail Prices API, GCP Cloud Billing Catalog API
-- Status: memory coefficient, 50% default utilization and Azure PUE are verified against CCF. Watts per vCPU and grid values are being verified.
+- Status: all constants verified against the CCF methodology page. Grid factors are older (pre-2020) averages; newer Ember data can replace them later.
 
 ## Assumptions and limitations
 - Utilization is assumed (default 50%), not measured.
 - Only Linux on-demand pricing for one VM size per provider.
 - Grid values are yearly averages, not real-time.
 - Results are estimates, not measurements.
+- One grid value is used per country. CCF's GCP values differ slightly (for example India 723, Iowa 479,          Singapore 493, Germany 319).
+- CCF lists Azure PUE as 1.185 (fleet average) in its text and 1.125 in its appendix. This tool uses 1.185.

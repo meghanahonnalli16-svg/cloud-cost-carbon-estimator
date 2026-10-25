@@ -5,7 +5,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 PRICE_FILE = ROOT / "data" / "pricing.json"
 URL = "https://prices.azure.com/api/retail/prices"
-REGIONS = {"centralindia": "Central India", "swedencentral": "Sweden Central", "eastus": "East US"}
+REGIONS = {"centralindia": "Central India", "swedencentral": "Sweden Central", "eastus": "East US", "southeastasia": "Southeast Asia", "germanywestcentral": "Germany West Central"}
 SKU = "Standard_D4s_v5"
 
 live = {}

@@ -5,7 +5,7 @@ import requests, ijson
 ROOT = Path(__file__).resolve().parents[1]
 PRICE_FILE = ROOT / "data" / "pricing.json"
 BASE = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/{}/index.json"
-REGIONS = ["ap-south-1", "eu-north-1", "us-east-1"]
+REGIONS = ["ap-south-1", "eu-north-1", "us-east-1", "ap-southeast-1", "eu-central-1"]
 INSTANCE = "m6i.xlarge"
 
 def fetch_price(region):
