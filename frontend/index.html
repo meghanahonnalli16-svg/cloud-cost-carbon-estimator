@@ -49,7 +49,7 @@
     vCPUs <input id="vcpu" type="number" value="4" style="width:60px">
     Hours/month <input id="hours" type="number" value="730" style="width:70px">
     Utilization <input id="util" type="number" step="0.1" value="0.5" style="width:60px">
-    <button onclick="run()">Compare</button>
+    <button onclick="run()">Compare</button> <a id="csv" href="/export.csv">Download CSV</a>
     <div id="rec"></div>
     <p>Greener <input id="wt" type="range" min="0" max="100" value="50" oninput="showBalanced()"> Cheaper
         (<span id="wv">50</span>% weight on cost)</p>
@@ -67,6 +67,7 @@
         async function run() {
             const q = `vcpu=${vcpu.value}&hours=${hours.value}&utilization=${util.value}`;
             data = await (await fetch('/compare?' + q)).json();
+            csv.href = '/export.csv?' + q;
             rec.innerHTML = `<div class="box">Cheapest: <b>${label(data.cheapest)}</b> ($${data.cheapest.cost_usd}/month)</div>
  <div class="box">Greenest: <b>${label(data.greenest)}</b> (${data.greenest.co2_kg} kg CO2e/month)</div>`;
             showBalanced();
