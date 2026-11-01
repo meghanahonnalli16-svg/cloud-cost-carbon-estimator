@@ -57,6 +57,10 @@
     <h3>Cost vs carbon trade-off</h3>
     <p>Green points are the best trade-offs: nothing else is both cheaper and greener.</p>
     <canvas id="scatterChart" height="120"></canvas>
+    <h3>What-if scenarios</h3>
+    <p>Pick an option and see what you would save. Spot and reserved discounts are assumptions.</p>
+    <select id="opt"></select> <button onclick="whatif()">Show what-if</button>
+    <table id="wtbl"></table>
     <table id="tbl"></table>
     <h3>Cost and CO2 per option</h3>
     <canvas id="barChart" height="110"></canvas>
@@ -71,6 +75,8 @@
             rec.innerHTML = `<div class="box">Cheapest: <b>${label(data.cheapest)}</b> ($${data.cheapest.cost_usd}/month)</div>
  <div class="box">Greenest: <b>${label(data.greenest)}</b> (${data.greenest.co2_kg} kg CO2e/month)</div>`;
             showBalanced();
+            opt.innerHTML = data.results.map((r, i) => `<option value="${i}">${label(r)}</option>`).join('');
+            wtbl.innerHTML = '';
             tbl.innerHTML = '<tr><th>Provider</th><th>Region</th><th>Instance</th><th>Cost $/month</th><th>kWh</th><th>kg CO2e</th><th>Best trade-off</th></tr>' +
                 data.results.map(r => `<tr class="${r.pareto ? 'pareto' : ''}"><td>${r.provider}</td><td>${r.region}</td><td>${r.instance}</td><td>${r.cost_usd}</td><td>${r.kwh}</td><td>${r.co2_kg}</td><td>${r.pareto ? 'Yes' : ''}</td></tr>`).join('');
 
@@ -99,6 +105,16 @@
                     plugins: { tooltip: { callbacks: { label: c => { const r = c.raw.info; return label(r) + ' ($' + r.cost_usd + ', ' + r.co2_kg + ' kg)'; } } } }
                 }
             });
+        }
+
+        async function whatif() {
+            const r = data.results[opt.value];
+            const q = `provider=${encodeURIComponent(r.provider)}&region=${encodeURIComponent(r.region)}&vcpu=${vcpu.value}&hours=${hours.value}&utilization=${util.value}`;
+            const w = await (await fetch('/whatif?' + q)).json();
+            if (w.error) { wtbl.innerHTML = '<tr><td>' + w.error + '</td></tr>'; return; }
+            wtbl.innerHTML = '<tr><th>Scenario</th><th>Cost $/month</th><th>CO2 kg</th><th>Saves $</th><th>Saves CO2 kg</th><th>Note</th></tr>' +
+                `<tr><td><b>Current: ${label(w.baseline)}</b></td><td>${w.baseline.cost_usd}</td><td>${w.baseline.co2_kg}</td><td>-</td><td>-</td><td></td></tr>` +
+                w.scenarios.map(s => `<tr><td>${s.name}</td><td>${s.cost_usd}</td><td>${s.co2_kg}</td><td>${s.saving_usd}</td><td>${s.saving_co2}</td><td>${s.note}</td></tr>`).join('');
         }
 
         function showBalanced() {
