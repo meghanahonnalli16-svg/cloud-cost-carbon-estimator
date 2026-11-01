@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Terraform plan estimate</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 950px;
+            margin: 30px auto;
+            padding: 0 15px
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            text-align: left
+        }
+
+        th {
+            background: #f0f0f0
+        }
+
+        .box {
+            background: #eef7ee;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px
+        }
+
+        .warn {
+            background: #fff4e5;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Terraform plan: cost and carbon estimate</h2>
+    <p><a href="/">Back to the estimator</a></p>
+    <p>Upload a plan file made with <code>terraform show -json tfplan &gt; plan.json</code>.
+        Supported VMs: AWS m6i.*, Azure Standard_D*s_v5, GCP n2-standard-* in the regions we have prices for.</p>
+    <input id="file" type="file" accept=".json">
+    Hours/month <input id="hours" type="number" value="730" style="width:70px">
+    Utilization <input id="util" type="number" step="0.1" value="0.5" style="width:60px">
+    <button onclick="estimate()">Estimate</button>
+    <div id="out"></div>
+    <script>
+        async function estimate() {
+            const out = document.getElementById('out');
+            const f = document.getElementById('file').files[0];
+            if (!f) { out.innerHTML = '<div class="warn">Choose a plan.json file first.</div>'; return; }
+            const text = await f.text();
+            const url = '/estimate-plan?hours=' + hours.value + '&utilization=' + util.value;
+            const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: text });
+            const d = await res.json();
+            if (d.error) { out.innerHTML = '<div class="warn">' + d.error + '</div>'; return; }
+            let html = '<div class="box">Total: <b>$' + d.total_cost_usd + '/month</b> and <b>' + d.total_co2_kg + ' kg CO2e/month</b></div>';
+            html += '<table><tr><th>Resource</th><th>Provider</th><th>Action</th><th>Size</th><th>Region</th><th>vCPU</th><th>Cost $/month</th><th>kWh</th><th>kg CO2e</th></tr>';
+            html += d.resources.map(r => '<tr><td>' + r.address + '</td><td>' + r.provider + '</td><td>' + r.action + '</td><td>' + r.size + '</td><td>' + r.region + '</td><td>' + r.vcpu + '</td><td>' + r.cost_usd + '</td><td>' + r.kwh + '</td><td>' + r.co2_kg + '</td></tr>').join('');
+            html += '</table>';
+            if (d.unsupported.length) {
+                html += '<div class="warn"><b>Not estimated:</b><ul>' + d.unsupported.map(u => '<li>' + u.address + ' (' + u.size + ', ' + u.region + '): ' + u.reason + '</li>').join('') + '</ul></div>';
+            }
+            out.innerHTML = html;
+        }
+    </script>
+</body>
+
+</html>

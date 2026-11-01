@@ -1,17 +1,23 @@
 import csv, io, json
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, Response
 from app.carbon import estimate_kwh, estimate_co2_kg
+from app.terraform import estimate_plan
 
 ROOT = Path(__file__).resolve().parents[2]
 
 app = FastAPI(title="Multi-Cloud Cost & Carbon Estimator")
 
 
-def build_results(vcpu, hours, utilization):
+def load_data():
     prices = json.loads((ROOT / "data" / "pricing.json").read_text())
     grid = json.loads((ROOT / "data" / "grid_intensity.json").read_text())
+    return prices, grid
+
+
+def build_results(vcpu, hours, utilization):
+    prices, grid = load_data()
     ram = vcpu * 4
     results = []
     for p in prices:
@@ -32,6 +38,11 @@ def build_results(vcpu, hours, utilization):
 @app.get("/")
 def home():
     return FileResponse(ROOT / "frontend" / "index.html")
+
+
+@app.get("/terraform")
+def terraform_page():
+    return FileResponse(ROOT / "frontend" / "terraform.html")
 
 
 @app.get("/compare")
@@ -90,3 +101,15 @@ def whatif(provider: str, region: str, vcpu: int = 4, hours: int = 730, utilizat
     out.append(scenario("Move to greenest: " + greenest["provider"] + " " + greenest["region"],
                         greenest["cost_usd"], greenest["co2_kg"], "Region and provider change"))
     return {"baseline": base, "scenarios": out}
+
+
+@app.post("/estimate-plan")
+async def estimate_plan_endpoint(request: Request, hours: int = 730, utilization: float = 0.5):
+    try:
+        plan = await request.json()
+    except Exception:
+        return {"error": "File is not valid JSON. Use: terraform show -json tfplan"}
+    if not isinstance(plan, dict) or "resource_changes" not in plan:
+        return {"error": "No resource_changes found. Use: terraform show -json tfplan"}
+    prices, grid = load_data()
+    return estimate_plan(plan, prices, grid, hours, utilization)

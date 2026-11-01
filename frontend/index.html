@@ -49,7 +49,8 @@
     vCPUs <input id="vcpu" type="number" value="4" style="width:60px">
     Hours/month <input id="hours" type="number" value="730" style="width:70px">
     Utilization <input id="util" type="number" step="0.1" value="0.5" style="width:60px">
-    <button onclick="run()">Compare</button> <a id="csv" href="/export.csv">Download CSV</a>
+    <button onclick="run()">Compare</button> <a id="csv" href="/export.csv">Download CSV</a> | <a
+        href="/terraform">Terraform plan</a>
     <div id="rec"></div>
     <p>Greener <input id="wt" type="range" min="0" max="100" value="50" oninput="showBalanced()"> Cheaper
         (<span id="wv">50</span>% weight on cost)</p>
