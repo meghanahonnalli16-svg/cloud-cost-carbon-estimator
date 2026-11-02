@@ -1,0 +1,9 @@
+.venv/
+venv/
+backend/venv/
+__pycache__/
+*.pyc
+.git/
+.pytest_cache/
+docs/
+data_pipeline/
