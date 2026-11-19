@@ -1,70 +1,335 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cloud Cost & Carbon Estimator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
     <style>
+        :root {
+            --teal: #1B998B;
+            --dark: #0E3B3B;
+            --mint: #E8F3F0;
+            --amber: #F2A33A;
+            --text: #102A2A;
+            --muted: #5B7070;
+            --line: #D5E2DF
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
         body {
-            font-family: Arial;
-            max-width: 950px;
-            margin: 30px auto;
-            padding: 0 15px
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            color: var(--text);
+            background: #F4F8F7
+        }
+
+        .wrap {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 0 20px
+        }
+
+        header {
+            background: var(--dark);
+            color: #fff
+        }
+
+        header .wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            padding-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px
+        }
+
+        .brand {
+            font-weight: 700;
+            font-size: 18px
+        }
+
+        .brand span {
+            color: #7fd6c8
+        }
+
+        nav a {
+            color: #cfe8e3;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px
+        }
+
+        nav a:hover {
+            color: #fff;
+            text-decoration: underline
+        }
+
+        .hero {
+            padding: 30px 0 6px
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+            line-height: 1.2
+        }
+
+        .sub {
+            margin: 0;
+            color: var(--muted);
+            max-width: 720px
+        }
+
+        h3 {
+            margin: 0 0 6px;
+            font-size: 18px
+        }
+
+        .note {
+            margin: 0 0 12px;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            box-shadow: 0 1px 3px rgba(16, 42, 42, .08)
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 4px
+        }
+
+        input[type=number] {
+            width: 110px;
+            padding: 9px 10px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 15px
+        }
+
+        select {
+            padding: 9px 10px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 15px;
+            max-width: 100%
+        }
+
+        button {
+            background: var(--teal);
+            color: #fff;
+            border: 0;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        button:hover {
+            background: #158075
+        }
+
+        .links {
+            margin-left: auto;
+            display: flex;
+            gap: 10px
+        }
+
+        .links a {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 9px 14px;
+            text-decoration: none;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 600;
+            background: #fff
+        }
+
+        .links a:hover {
+            background: var(--mint)
+        }
+
+        .grid3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+            margin: 16px 0
+        }
+
+        .grid3 .stat {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            box-shadow: 0 1px 3px rgba(16, 42, 42, .08)
+        }
+
+        .stat .label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--teal)
+        }
+
+        .stat .value {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 6px 0 2px
+        }
+
+        .stat .meta {
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .slider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .slider input {
+            flex: 1;
+            min-width: 180px;
+            accent-color: var(--teal)
+        }
+
+        .tablewrap {
+            overflow-x: auto
         }
 
         table {
             border-collapse: collapse;
             width: 100%;
-            margin: 15px 0
-        }
-
-        th,
-        td {
-            border: 1px solid #ccc;
-            padding: 6px 10px;
-            text-align: left
+            font-size: 14px
         }
 
         th {
-            background: #f0f0f0
-        }
-
-        .box {
-            background: #eef7ee;
+            background: var(--mint);
+            text-align: left;
             padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-            color: #000
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--dark)
         }
 
-        .pareto {
-            background: #eef7ee
+        td {
+            padding: 10px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        tr.pareto td {
+            background: #EAF7F3;
+            font-weight: 600
+        }
+
+        #wtbl {
+            margin-top: 14px
+        }
+
+        footer {
+            color: var(--muted);
+            font-size: 13px;
+            padding: 10px 0 40px
         }
     </style>
 </head>
 
 <body>
-    <h2>Multi-Cloud Cost & Carbon Footprint Estimator</h2>
-    vCPUs <input id="vcpu" type="number" value="4" style="width:60px">
-    Hours/month <input id="hours" type="number" value="730" style="width:70px">
-    Utilization <input id="util" type="number" step="0.1" value="0.5" style="width:60px">
-    <button onclick="run()">Compare</button> <a id="csv" href="/export.csv">Download CSV</a> | <a
-        href="/terraform">Terraform plan</a>
-    <div id="rec"></div>
-    <p>Greener <input id="wt" type="range" min="0" max="100" value="50" oninput="showBalanced()"> Cheaper
-        (<span id="wv">50</span>% weight on cost)</p>
-    <div id="bal"></div>
-    <h3>Cost vs carbon trade-off</h3>
-    <p>Green points are the best trade-offs: nothing else is both cheaper and greener.</p>
-    <canvas id="scatterChart" height="120"></canvas>
-    <h3>What-if scenarios</h3>
-    <p>Pick an option and see what you would save. Spot and reserved discounts are assumptions.</p>
-    <select id="opt"></select> <button onclick="whatif()">Show what-if</button>
-    <table id="wtbl"></table>
-    <table id="tbl"></table>
-    <h3>Cost and CO2 per option</h3>
-    <canvas id="barChart" height="110"></canvas>
+    <header>
+        <div class="wrap">
+            <div class="brand">Cloud<span>Carbon</span> Estimator</div>
+            <nav><a href="/">Dashboard</a><a href="/terraform">Terraform plan</a><a href="/docs">API docs</a></nav>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <section class="hero">
+            <h1>Multi-Cloud Cost & Carbon Footprint Estimator</h1>
+            <p class="sub">Compare AWS, Azure and GCP virtual machines across regions on monthly cost and CO2 emissions,
+                using live provider prices and the Cloud Carbon Footprint method.</p>
+        </section>
+
+        <div class="card controls">
+            <div class="field"><label>vCPUs</label><input id="vcpu" type="number" value="4"></div>
+            <div class="field"><label>Hours / month</label><input id="hours" type="number" value="730"></div>
+            <div class="field"><label>Utilization (0-1)</label><input id="util" type="number" step="0.1" value="0.5">
+            </div>
+            <button onclick="run()">Compare</button>
+            <div class="links"><a id="csv" href="/export.csv">Download CSV</a><a href="/terraform">Terraform plan</a>
+            </div>
+        </div>
+
+        <div class="grid3">
+            <div id="rec" style="display:contents"></div>
+            <div id="bal" style="display:contents"></div>
+        </div>
+
+        <div class="card">
+            <div class="slider"><b>Greener</b>
+                <input id="wt" type="range" min="0" max="100" value="50" oninput="showBalanced()">
+                <b>Cheaper</b> <span>(<span id="wv">50</span>% weight on cost)</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Cost vs carbon trade-off</h3>
+            <p class="note">Teal points are the best trade-offs: nothing else is both cheaper and greener.</p>
+            <canvas id="scatterChart" height="120"></canvas>
+        </div>
+
+        <div class="card">
+            <h3>What-if scenarios</h3>
+            <p class="note">Pick an option and see what you would save. Spot and reserved discounts are assumptions.</p>
+            <select id="opt"></select> <button onclick="whatif()">Show what-if</button>
+            <div class="tablewrap">
+                <table id="wtbl"></table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>All options</h3>
+            <div class="tablewrap">
+                <table id="tbl"></table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Cost and CO2 per option</h3>
+            <canvas id="barChart" height="110"></canvas>
+        </div>
+
+        <footer>Estimates only. Prices come from the AWS, Azure and GCP pricing APIs; emissions use Cloud Carbon
+            Footprint coefficients and grid factors.</footer>
+    </div>
+
     <script>
         let bar, scatter, data;
         const label = r => r.provider + ' ' + r.region;
@@ -73,8 +338,8 @@
             const q = `vcpu=${vcpu.value}&hours=${hours.value}&utilization=${util.value}`;
             data = await (await fetch('/compare?' + q)).json();
             csv.href = '/export.csv?' + q;
-            rec.innerHTML = `<div class="box">Cheapest: <b>${label(data.cheapest)}</b> ($${data.cheapest.cost_usd}/month)</div>
- <div class="box">Greenest: <b>${label(data.greenest)}</b> (${data.greenest.co2_kg} kg CO2e/month)</div>`;
+            rec.innerHTML = `<div class="stat"><div class="label">Cheapest</div><div class="value">${label(data.cheapest)}</div><div class="meta">$${data.cheapest.cost_usd}/month, ${data.cheapest.co2_kg} kg CO2e</div></div>
+ <div class="stat"><div class="label">Greenest</div><div class="value">${label(data.greenest)}</div><div class="meta">${data.greenest.co2_kg} kg CO2e/month, $${data.greenest.cost_usd}</div></div>`;
             showBalanced();
             opt.innerHTML = data.results.map((r, i) => `<option value="${i}">${label(r)}</option>`).join('');
             wtbl.innerHTML = '';
@@ -87,7 +352,7 @@
                 type: 'bar', data: {
                     labels, datasets: [
                         { label: 'Cost ($/month)', data: data.results.map(r => r.cost_usd), backgroundColor: '#4a90d9' },
-                        { label: 'CO2e (kg/month)', data: data.results.map(r => r.co2_kg), backgroundColor: '#5cb85c' }]
+                        { label: 'CO2e (kg/month)', data: data.results.map(r => r.co2_kg), backgroundColor: '#1B998B' }]
                 }
             });
 
@@ -114,7 +379,7 @@
             const w = await (await fetch('/whatif?' + q)).json();
             if (w.error) { wtbl.innerHTML = '<tr><td>' + w.error + '</td></tr>'; return; }
             wtbl.innerHTML = '<tr><th>Scenario</th><th>Cost $/month</th><th>CO2 kg</th><th>Saves $</th><th>Saves CO2 kg</th><th>Note</th></tr>' +
-                `<tr><td><b>Current: ${label(w.baseline)}</b></td><td>${w.baseline.cost_usd}</td><td>${w.baseline.co2_kg}</td><td>-</td><td>-</td><td></td></tr>` +
+                `<tr class="pareto"><td>Current: ${label(w.baseline)}</td><td>${w.baseline.cost_usd}</td><td>${w.baseline.co2_kg}</td><td>-</td><td>-</td><td></td></tr>` +
                 w.scenarios.map(s => `<tr><td>${s.name}</td><td>${s.cost_usd}</td><td>${s.co2_kg}</td><td>${s.saving_usd}</td><td>${s.saving_co2}</td><td>${s.note}</td></tr>`).join('');
         }
 
@@ -125,7 +390,7 @@
             const norm = (v, a) => { const lo = Math.min(...a), hi = Math.max(...a); return hi === lo ? 0 : (v - lo) / (hi - lo); };
             let best = null, bs = Infinity;
             rs.forEach(r => { const s = w * norm(r.cost_usd, cs) + (1 - w) * norm(r.co2_kg, es); if (s < bs) { bs = s; best = r; } });
-            bal.innerHTML = `<div class="box">Balanced pick: <b>${label(best)}</b> ($${best.cost_usd}/month, ${best.co2_kg} kg CO2e)</div>`;
+            bal.innerHTML = `<div class="stat"><div class="label">Balanced pick</div><div class="value">${label(best)}</div><div class="meta">$${best.cost_usd}/month, ${best.co2_kg} kg CO2e</div></div>`;
         }
         run();
     </script>
